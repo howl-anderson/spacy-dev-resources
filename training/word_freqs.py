@@ -27,16 +27,15 @@ def iter_comments(loc):
 
 def count_freqs(Language, input_loc, output_loc):
     print(output_loc)
-    tokenizer = Language.Defaults.create_tokenizer()
 
     counts = PreshCounter()
     for json_comment in iter_comments(input_loc):
-        doc = tokenizer(json_comment['body'])
+        doc = Language.make_doc(json_comment['body'])
         doc.count_by(ORTH, counts=counts)
 
     with io.open(output_loc, 'w', 'utf8') as file_:
         for orth, freq in counts:
-            string = tokenizer.vocab.strings[orth]
+            string = Language.vocab.strings[orth]
             if not string.isspace():
                 file_.write('%d\t%s\n' % (freq, string))
 
