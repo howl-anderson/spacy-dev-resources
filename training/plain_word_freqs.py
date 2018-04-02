@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 import codecs
 import glob
+from pathlib import Path
 from collections import Counter
 
 import plac
@@ -17,16 +18,24 @@ def count_words(fpath):
     return counter
 
 
-def main(input_glob, out_loc, workers=4):
+@plac.annotations(
+    input_loc=("Location of input file list", "positional", None, Path),
+    out_loc=("Directory for frequency files", "positional", None, Path),
+    workers=("Number of workers", "option", "n", int),
+)
+def main(input_loc, out_loc, workers=-2):
+    input_files = [str(i.absolute()) for i in input_loc.glob("**/*")]
+    output_file = str(out_loc.absolute())
+
     p = Pool(processes=workers)
-    counts = p.map(count_words, tqdm(list(glob.glob(input_glob))))
+    counts = p.map(count_words, tqdm(input_files))
     df_counts = Counter()
     word_counts = Counter()
     for wc in tqdm(counts):
         df_counts.update(wc.keys())
         word_counts.update(wc)
-    with codecs.open(out_loc, "w", encoding="utf8") as f:
-        for word, df in df_counts.iteritems():
+    with codecs.open(output_file, "w", encoding="utf8") as f:
+        for word, df in df_counts.items():
             f.write(u"{freq}\t{df}\t{word}\n".format(word=repr(word), df=df, freq=word_counts[word]))
 
 
