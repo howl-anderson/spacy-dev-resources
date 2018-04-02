@@ -69,7 +69,7 @@ def main(lang, in_dir, out_loc, negative=5, n_workers=4, window=5, size=128, min
         sample=1e-5,
         negative=negative
     )
-    nlp = spacy.load(lang, parser=False, tagger=False, entity=False)
+    nlp = spacy.blank(lang, parser=False, tagger=False, entity=False)
     corpus = Corpus(in_dir)
     total_words = 0
     total_sents = 0
@@ -77,7 +77,7 @@ def main(lang, in_dir, out_loc, negative=5, n_workers=4, window=5, size=128, min
         with io.open(text_loc, 'r', encoding='utf8') as file_:
             text = file_.read()
         total_sents += text.count('\n')
-        doc = nlp(text)
+        doc = nlp.make_doc(text)
         total_words += corpus.count_doc(doc)  
         logger.info("PROGRESS: at batch #%i, processed %i words, keeping %i word types",
                     text_no, total_words, len(corpus.strings))
