@@ -38,7 +38,12 @@ class Corpus(object):
         for text_loc in iter_dir(self.directory):
             with io.open(text_loc, 'r', encoding='utf8') as file_:
                 text = file_.read()
-            yield text
+            yield self._line_segment(text)
+
+    def _line_segment(line_text):
+        doc = nlp.make_doc(text)
+        for token in doc:
+            yield token.orth_
 
 def iter_dir(loc):
     for fn in os.listdir(loc):
@@ -90,7 +95,8 @@ def main(lang, in_dir, out_loc, negative=5, n_workers=4, window=5, size=128, min
     model.finalize_vocab()
     model.iter = nr_iter
     model.train(corpus)
-    model.save(out_loc)
+    # model.save(out_loc)
+    model.wv.save_word2vec_format(out_loc, binary=False)
 
 
 if __name__ == '__main__':
