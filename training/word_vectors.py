@@ -95,7 +95,6 @@ def main(lang, in_dir, out_loc, negative=5, n_workers=4, window=5, size=128, min
     model.finalize_vocab()
     model.iter = nr_iter
     model.train(corpus)
-    # model.save(out_loc)
     model.wv.save_word2vec_format(out_loc, binary=False)
 
 
