@@ -17,3 +17,4 @@ virtualenv==15.1.0
 joblib==0.10.3
 spacy>=1.7.5
 ftfy==4.4.2
+tqdm==4.19.8
